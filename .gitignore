@@ -2,3 +2,9 @@
 heartbeat-sounds/
 .ipynb_checkpoints/
 *.swp
+papers/
+pascal/
+physionet/
+training.zip
+project/training_set
+project/testing_set

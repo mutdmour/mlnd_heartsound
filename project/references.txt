@@ -1,0 +1,4 @@
+https://www.physionet.org/challenge/2016/
+https://www.physionet.org/physiotools/hss/
+https://www.ncbi.nlm.nih.gov/pubmed/26340769 //logistic regression module
+

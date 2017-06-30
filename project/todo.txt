@@ -1,0 +1,11 @@
+----------
+
+----------
+later:
+* add to files as needed ## Remastered in Python - Mutasem Aldmour / email or github link
+* module names shortened ex: bf.butterworth
+* figures
+* move high/low pass filter values to options
+* git push
+* consider spike removal strategies (better way of filter)
+* band pass filter instead of high and low pass filters? different types of filters? 
