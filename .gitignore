@@ -8,3 +8,4 @@ physionet/
 training.zip
 project/training_set
 project/testing_set
+*.pyc
