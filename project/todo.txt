@@ -1,5 +1,5 @@
 ----------
-
+--- getPSDfeatureSrpinger is still wrong
 ----------
 later:
 * add to files as needed ## Remastered in Python - Mutasem Aldmour / email or github link
@@ -9,3 +9,5 @@ later:
 * git push
 * consider spike removal strategies (better way of filter)
 * band pass filter instead of high and low pass filters? different types of filters? 
+* test audio recording in seperate text file for testing reasons - or csv with results in other files or same file
+* lpf_frequency for envelope in settings

@@ -18,3 +18,19 @@ Fri June 30
 ------------
 1. rewrite sample code
 	- remove spikes (complete and tested)
+	- hilber_envelope
+	- homorophic_envelope
+	- normalize_signal
+	- getPSDfeatureSrpinger (wrong)
+
+
+Sat July 1
+------------
+1. rewrote sample code
+	- getDWT 
+
+Sun July 2
+-----
+1. rewrote sample code
+	- getDWT (complete)
+	- getSpringerPCGFeatures (complete)

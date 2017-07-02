@@ -2,3 +2,4 @@ https://www.physionet.org/challenge/2016/
 https://www.physionet.org/physiotools/hss/
 https://www.ncbi.nlm.nih.gov/pubmed/26340769 //logistic regression module
 
+https://books.google.jo/books?id=x4P25KZCAB8C&pg=PA109&lpg=PA109&dq=pcg+features&source=bl&ots=e2jK_KzbFb&sig=4dGR7TeruE8QoH9zCPJQ0CaXqdM&hl=en&sa=X&ved=0ahUKEwjTg5OPxOfUAhUGOhQKHeVNDs8Q6AEIJjAA#v=onepage&q=pcg%20features&f=false //PCG_Features

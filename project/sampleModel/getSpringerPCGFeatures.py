@@ -38,6 +38,16 @@
 
 #[PCG_Features, featuresFs] = 
 import butterworth_filter as bf
+import schmidt_spike_removal as ssr
+import Homomorphic_Envelope_with_Hilbert as heh
+import normalize_signal as ns
+import Hilbert_Envelope as he
+from scipy.signal import resample_poly
+import get_PSD_feature_Springer_HMM as getPSD
+import numpy as np
+import getDWT as gdwt
+# from scipy.signal import resample_poly
+# from sp.multirate import resample
 
 def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
     # function PCG_Features = getSpringerPCGFeatures(audio, Fs)
@@ -53,53 +63,49 @@ def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
     audio_data = bf.butterworth_highpass_filter(audio_data,2,25,Fs,'highpass')
 
     ## Spike removal from the original paper:
-    audio_data = schmidt_spike_removal(audio_data,Fs)
+    audio_data = ssr.schmidt_spike_removal(audio_data,Fs)
 
+    # Find the homomorphic envelope
+    homomorphic_envelope = heh.Homomorphic_Envelope_with_Hilbert(audio_data, Fs)
+    # Downsample the envelope:
+    # print featuresFs, Fs
+    # print homomorphic_envelope
+    downsampled_homomorphic_envelope = resample_poly(homomorphic_envelope,featuresFs, Fs)
+    # normalise the envelope:
+    downsampled_homomorphic_envelope = ns.normalise_signal(downsampled_homomorphic_envelope)
 
+    ## Hilbert Envelope
+    hilbert_envelope = he.Hilbert_Envelope(audio_data, Fs)
+    downsampled_hilbert_envelope = resample_poly(hilbert_envelope, featuresFs, Fs)
+    downsampled_hilbert_envelope = ns.normalise_signal(downsampled_hilbert_envelope)
 
-    # ## Find the homomorphic envelope
-    # homomorphic_envelope = Homomorphic_Envelope_with_Hilbert(audio_data, Fs)
-    # # Downsample the envelope:
-    # downsampled_homomorphic_envelope = resample(homomorphic_envelope,featuresFs, Fs)
-    # # normalise the envelope:
-    # downsampled_homomorphic_envelope = normalise_signal(downsampled_homomorphic_envelope)
+    ## Power spectral density feature:
 
+    psd = np.transpose(getPSD.get_PSD_feature_Springer_HMM(audio_data, Fs, 40,60))
+    psd = resample_poly(psd, len(downsampled_homomorphic_envelope), len(psd))
+    psd = ns.normalise_signal(psd)
 
-    # ## Hilbert Envelope
-    # hilbert_envelope = Hilbert_Envelope(audio_data, Fs)
-    # downsampled_hilbert_envelope = resample(hilbert_envelope, featuresFs, Fs)
-    # downsampled_hilbert_envelope = normalise_signal(downsampled_hilbert_envelope)
+    ## Wavelet features:
 
-    # ## Power spectral density feature:
-
-    # psd = get_PSD_feature_Springer_HMM(audio_data, Fs, 40,60)'
-    # psd = resample(psd, length(downsampled_homomorphic_envelope), length(psd))
-    # psd = normalise_signal(psd)
-
-    # ## Wavelet features:
-
-    # # if(include_wavelet)
-    # #     wavelet_level = 3
-    # #     wavelet_name ='rbio3.9'
+    if (include_wavelet):
+        wavelet_level = 3
+        wavelet_name = 'rbio3.9'
         
-    # #     # Audio needs to be longer than 1 second for getDWT to work:
-    # #     if(length(audio_data)< Fs*1.025)
-    # #         audio_data = [audio_data zeros(round(0.025*Fs),1)]
-    # #     end
+        # Audio needs to be longer than 1 second for getDWT to work:
+        if (len(audio_data)< Fs*1.025):
+            audio_data = np.concatenate(audio_data,np.zeros(round(0.025*Fs)))
         
-    # #     [cD, cA] = getDWT(audio_data,wavelet_level,wavelet_name)
+        cD = gdwt.getDWT(audio_data,wavelet_level,wavelet_name) #cA not used
         
-    # #     wavelet_feature = abs(cD(wavelet_level,:))
-    # #     wavelet_feature = wavelet_feature(1:length(homomorphic_envelope))
-    # #     downsampled_wavelet = resample(wavelet_feature, featuresFs, Fs)
-    # #     downsampled_wavelet =  normalise_signal(downsampled_wavelet)'
+        wavelet_feature = abs(cD[wavelet_level-1][:])
+        wavelet_feature = wavelet_feature[0:len(homomorphic_envelope)]
+        downsampled_wavelet = resample_poly(wavelet_feature, featuresFs, Fs)
+        downsampled_wavelet =  np.transpose(ns.normalise_signal(downsampled_wavelet))
 
-    # ##
-
-    # if(include_wavelet)
-    #     PCG_Features = [downsampled_homomorphic_envelope, downsampled_hilbert_envelope, psd, downsampled_wavelet]
-    # else
-    #     PCG_Features = [downsampled_homomorphic_envelope, downsampled_hilbert_envelope, psd]
+    if(include_wavelet):
+        PCG_Features = [downsampled_homomorphic_envelope, downsampled_hilbert_envelope, psd, downsampled_wavelet]
+    else:
+        PCG_Features = [downsampled_homomorphic_envelope, downsampled_hilbert_envelope, psd]
 
     ## Plotting figures
     # if(figures)
@@ -110,3 +116,4 @@ def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
     #     t2 = (1:length(PCG_Features))./featuresFs
     #     plot(t2,PCG_Features)
     #     pause()
+    return PCG_Features, featuresFs
