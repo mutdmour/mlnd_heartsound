@@ -34,3 +34,5 @@ Sun July 2
 1. rewrote sample code
 	- getDWT (complete)
 	- getSpringerPCGFeatures (complete)
+	- labelPCGFeatures (complete and tested)
+	

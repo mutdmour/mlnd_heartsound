@@ -20,26 +20,6 @@
 # S. E. Schmidt et al., "Segmentation of heart sound recordings by a
 # duration-dependent hidden Markov model," Physiol. Meas., vol. 31,
 # no. 4, pp. 513-29, Apr. 2010.
-#
-# Developed by David Springer for comparison purposes in the paper:
-# D. Springer et al., ?Logistic Regression-HSMM-based Heart Sound
-# Segmentation,? IEEE Trans. Biomed. Eng., In Press, 2015.
-#
-## Copyright (C) 2016  David Springer
-# dave.springer@gmail.com
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY;without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #function high_pass_filtered_signal = 
 from scipy.signal import butter, filtfilt
@@ -51,14 +31,15 @@ def butterworth_highpass_filter(original_signal,order,cutoff,sampling_frequency,
 def butterworth_lowpass_filter(original_signal,order,cutoff,sampling_frequency,figures=False):
 	return butterworth_filter(original_signal,order,cutoff,sampling_frequency,'lowpass',figures)
 
-def butterworth_filter(original_signal,order,cutoff,sampling_frequency,ftype='lowpass',figures=False):
-
+def butterworth_filter(original_signal,order,cutoff,sampling_frequency,ftype,figures=False):
 	#Get the butterworth filter coefficients
 	B,A = butter(order,2.*cutoff/sampling_frequency,ftype)
 
 	#Forward-backward filter the original signal using the butterworth
 	#coefficients, ensuring zero phase distortion
-	filtered_signal = filtfilt(B,A,np.array(original_signal),axis=0)
+	filtered_signal = filtfilt(B,A,original_signal)
+	# print B, A
+	print filtered_signal[0:10]
 
 	return filtered_signal
 
@@ -78,3 +59,28 @@ def butterworth_filter(original_signal,order,cutoff,sampling_frequency,ftype='lo
 	#     pause()
 	# end
 
+if __name__ == '__main__':
+	import scipy.io
+	signal = scipy.io.loadmat('./test_data/butterworth_filter/audio_data.mat',struct_as_record=False)
+	signal = signal['audio_data']
+	signal = np.reshape(signal,np.shape(signal)[0])
+	# print np.shape(signal), signal
+	Fs = 1000
+
+	actual_lowpass = butterworth_lowpass_filter(signal,2,400,Fs)
+	desired_lowpass = scipy.io.loadmat('./test_data/butterworth_filter/low_pass_filtered_audio_data.mat',struct_as_record=False)
+	desired_lowpass = desired_lowpass['low_pass_filtered_audio_data']
+	desired_lowpass = np.reshape(desired_lowpass,np.shape(desired_lowpass)[0])
+	np.testing.assert_allclose(actual_lowpass, desired_lowpass, rtol=1e-02)
+
+	actual_highpass = butterworth_highpass_filter(signal,2,25,Fs)
+	desired_highpass = scipy.io.loadmat('./test_data/butterworth_filter/high_pass_filtered_audio_data.mat',struct_as_record=False)
+	desired_highpass = desired_highpass['high_pass_filtered_audio_data']
+	desired_highpass = np.reshape(desired_highpass,np.shape(desired_highpass)[0])
+	np.testing.assert_allclose(actual_highpass, desired_highpass, rtol=1e-02)
+	# print signal
+    # state_observation_values = np.transpose(state_observation_values['state_observation_values'])
+    # print np.shape(state_observation_values)
+    # print state_observation_values[0:10][0]
+
+	print "butterworth_filter.py has been tested successfully"

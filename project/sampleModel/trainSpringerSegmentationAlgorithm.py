@@ -46,6 +46,7 @@
 #function [logistic_regression_B_matrix, pi_vector, total_obs_distribution] = 
 import numpy as np
 import getSpringerPCGFeatures as gSPCGF
+import labelPCGStates as labelPCG
 
 #options instead of Fs
 def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_options, figures=False):
@@ -56,7 +57,7 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_
     Fs = springer_options['audio_Fs']
 
     # A matrix of the values from each state in each of the PCG recordings:
-    state_observation_values = np.empty((numPCGs,numberOfStates))
+    state_observation_values = np.empty((numPCGs,numberOfStates), dtype=object)
 
     for PCGi in range(0,len(PCGCellArray)):
         PCG_audio = PCGCellArray[PCGi]
@@ -66,7 +67,7 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_
         
         [PCG_Features, featuresFs] = gSPCGF.getSpringerPCGFeatures(PCG_audio, springer_options)
         
-        # PCG_states = labelPCGStates(PCG_Features(:,1),S1_locations, S2_locations, featuresFs) #XXX
+        PCG_states = labelPCG.labelPCGStates(PCG_Features[:][0],S1_locations, S2_locations, featuresFs) #XXX
         
         ## XXX
         ## Plotting assigned states:
@@ -84,9 +85,13 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_
         #     legend('Audio','Features','States')
         #     pause()
         
-        ## Group together all observations from the same state in the PCG recordings:
-        # for state_i in range(1,numberOfStates):
-        #     state_observation_values{PCGi,state_i} = PCG_Features(PCG_states == state_i,:) #XXX
+        # Group together all observations from the same state in the PCG recordings:
+        for state_i in range(0,numberOfStates):
+            x = np.multiply(PCG_Features[state_i],np.int16(PCG_states == state_i+1)) #xxx variable name
+            x = PCG_Features[state_i][np.nonzero(x)]
+            # print np.shape(x)#, x
+            state_observation_values[PCGi][state_i] = x
+        # print np.shape(state_observation_values[0][3]), state_observation_values
 
     # Save the state observation values to the main workspace of Matlab for
     # later investigation if needed:

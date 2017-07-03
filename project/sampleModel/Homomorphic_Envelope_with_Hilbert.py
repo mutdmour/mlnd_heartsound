@@ -59,6 +59,17 @@ def Homomorphic_Envelope_with_Hilbert(input_signal, sampling_frequency,lpf_frequ
 	#     legend('Original Signal','Homomorphic Envelope')
 
 if __name__ == '__main__':
-	from scipy.io import loadmat
-	# data = loadmat('test_data/4_spikes_removed.mat')
+    import scipy.io
+    input_signal = scipy.io.loadmat('./test_data/Homomorphic_Envelope_with_Hilbert/input_signal.mat',struct_as_record=False)
+    input_signal = input_signal['input_signal']
+    input_signal = np.reshape(input_signal,np.shape(input_signal)[0])
+
+    actual = Homomorphic_Envelope_with_Hilbert(input_signal, 1000)
+
+    desired = scipy.io.loadmat('./test_data/Homomorphic_Envelope_with_Hilbert/homomorphic_envelope.mat',struct_as_record=False)
+    desired = desired['homomorphic_envelope']
+    # print np.shape(desired), desired
+    desired = np.reshape(desired,np.shape(desired)[0]) 
+    np.testing.assert_allclose(actual, desired, rtol=1e-3, atol=.5)
+    print "Homomorphic_Envelope_with_Hilbert.py has been tested successfully"
 

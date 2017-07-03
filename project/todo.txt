@@ -11,3 +11,11 @@ later:
 * band pass filter instead of high and low pass filters? different types of filters? 
 * test audio recording in seperate text file for testing reasons - or csv with results in other files or same file
 * lpf_frequency for envelope in settings
+
+- Timing durations from Schmidt (?) labelPCGstates.py
+- A. G.
+    # Tilkian and M. B. Conover, Understanding heart sounds and murmurs: with
+    # an introduction to lung sounds, 4th ed. Saunders, 2001
+    - Setting the duration from each R-peak to (R-peak+mean_S1)
+
+- bugs in label PCGStates.py

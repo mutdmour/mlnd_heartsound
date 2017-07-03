@@ -46,8 +46,8 @@ def runExampleScript():
 	## Split the data into train and test sets:
 	# Select the 5 recordings for training and a sixth for testing:
 	training_indices = [0, 46, 360, 401, 571]
-	train_recordings = [example_audio_data[0][i] for i in training_indices]
-	train_annotations = [example_annotations[i] for i in training_indices]
+	train_recordings = np.array([example_audio_data[0][i] for i in training_indices])
+	train_annotations = np.array([example_annotations[i] for i in training_indices])
 
 	test_index = 663
 	test_recordings = example_audio_data[0][test_index] 

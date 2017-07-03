@@ -13,27 +13,6 @@
 #
 ## Outputs:
 # hilbert_envelope is the hilbert envelope of the original signal
-#
-# This code was developed by David Springer for comparison purposes in the
-# paper:
-# D. Springer et al., "Logistic Regression-HSMM-based Heart Sound
-# Segmentation," IEEE Trans. Biomed. Eng., In Press, 2015.
-#
-## Copyright (C) 2016  David Springer
-# dave.springer@gmail.com
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #function hilbert_envelope = 
 import numpy as np
@@ -50,3 +29,18 @@ def Hilbert_Envelope(input_signal, sampling_frequency,figures=False):
 	#     legend('Original Signal','Hilbert Envelope');
 	#     pause();
 	# end
+
+if __name__ == '__main__':
+    import scipy.io
+    input_signal = scipy.io.loadmat('./test_data/Hilbert_Envelope/input_signal.mat',struct_as_record=False)
+    input_signal = input_signal['input_signal']
+    input_signal = np.reshape(input_signal,np.shape(input_signal)[0])
+
+    actual = Hilbert_Envelope(input_signal, 1000)
+
+    desired = scipy.io.loadmat('./test_data/Hilbert_Envelope/hilbert_envelope.mat',struct_as_record=False)
+    desired = desired['hilbert_envelope']
+    # print np.shape(desired), desired
+    desired = np.reshape(desired,np.shape(desired)[0]) 
+    np.testing.assert_allclose(actual, desired, rtol=1e-07, atol=1e-7)
+    print "Hilbert_Envelope.py has been tested successfully"

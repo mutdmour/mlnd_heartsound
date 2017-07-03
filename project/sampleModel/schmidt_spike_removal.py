@@ -30,26 +30,6 @@
 # S. E. Schmidt et al., "Segmentation of heart sound recordings by a
 # duration-dependent hidden Markov model," Physiol. Meas., vol. 31,
 # no. 4, pp. 513-29, Apr. 2010.
-#
-# Developed by David Springer for comparison purposes in the paper:
-# D. Springer et al., ?Logistic Regression-HSMM-based Heart Sound
-# Segmentation,? IEEE Trans. Biomed. Eng., In Press, 2015.
-#
-## Copyright (C) 2016  David Springer
-# dave.springer@gmail.com
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY;without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 #function [despiked_signal] = 
@@ -191,3 +171,6 @@ if __name__ == '__main__':
 
     desired = [3,2,4,5,1,3,1.000000e-04,1.000000e-04,3,5,-5,-6,0,1,3,-5,-6,0,1,3,-5,-6,0,1,3,-5,-6,0,1,3,4,-5,1.000000e-04,1.000000e-04,-1]
     test(a,4,desired)
+    
+    print "schmidt_spike_removal.py has been tested successfully"
+    

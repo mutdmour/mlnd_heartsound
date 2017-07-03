@@ -19,22 +19,6 @@
 # PCG_Features: array of derived features
 # featuresFs: the sampling frequency of the derived features. This is set
 # in default_Springer_HSMM_options.m
-#
-## Copyright (C) 2016  David Springer
-# dave.springer@gmail.com
-# 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY;without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #[PCG_Features, featuresFs] = 
 import butterworth_filter as bf
@@ -117,3 +101,6 @@ def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
     #     plot(t2,PCG_Features)
     #     pause()
     return PCG_Features, featuresFs
+
+if __name__ == 'main':
+    pass
