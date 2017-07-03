@@ -9,3 +9,4 @@ training.zip
 project/training_set
 project/testing_set
 *.pyc
+project/original_matlab_code/
