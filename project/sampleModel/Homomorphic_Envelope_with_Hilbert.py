@@ -68,7 +68,6 @@ if __name__ == '__main__':
 
     desired = scipy.io.loadmat('./test_data/Homomorphic_Envelope_with_Hilbert/homomorphic_envelope.mat',struct_as_record=False)
     desired = desired['homomorphic_envelope']
-    # print np.shape(desired), desired
     desired = np.reshape(desired,np.shape(desired)[0]) 
     np.testing.assert_allclose(actual, desired, rtol=1e-3, atol=.5)
     print "Homomorphic_Envelope_with_Hilbert.py has been tested successfully"

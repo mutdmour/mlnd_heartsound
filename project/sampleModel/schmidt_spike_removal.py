@@ -136,11 +136,11 @@ if __name__ == '__main__':
     # assert(schmidt_spike_removal(a,6) == [-5,-6,0,1,3,4,-5,-4,-4,-1,1,1,7])
 
     from numpy.testing import assert_almost_equal
-    def test(original, fs, desired_despiked, print_output=False):
+    def test(original, fs, desired_despiked, print_output=False, decimals=4):
         actual = schmidt_spike_removal(np.array(original,dtype=np.float16),fs)
         if (print_output):
-            print np.around(actual.tolist(),decimals=4)
-        assert_almost_equal(actual, np.array(desired), decimal=4)
+            print np.around(actual.tolist(),decimals=decimals)
+        assert_almost_equal(actual, np.array(desired), decimal=decimals)
 
     a = [3,2,4,5,1]
     a += [3,-1,-79,3,5]
@@ -171,6 +171,21 @@ if __name__ == '__main__':
 
     desired = [3,2,4,5,1,3,1.000000e-04,1.000000e-04,3,5,-5,-6,0,1,3,-5,-6,0,1,3,-5,-6,0,1,3,-5,-6,0,1,3,4,-5,1.000000e-04,1.000000e-04,-1]
     test(a,4,desired)
-    
+
+
+    import scipy.io
+    signal = scipy.io.loadmat('./test_data/schmidt_spike_removal/original_signal.mat',struct_as_record=False)
+    signal = signal['original_signal']
+    signal = np.reshape(signal,np.shape(signal)[0])
+    Fs = 1000 
+
+    desired = scipy.io.loadmat('./test_data/schmidt_spike_removal/despiked_signal.mat',struct_as_record=False)
+    desired = desired['despiked_signal']
+    desired = np.reshape(desired,np.shape(desired)[0]) 
+
+    actual = schmidt_spike_removal(desired,Fs)
+    np.testing.assert_allclose(actual, desired, rtol=1e-3, atol=1e-3)    
+
     print "schmidt_spike_removal.py has been tested successfully"
+
     

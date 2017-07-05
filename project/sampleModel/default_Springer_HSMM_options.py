@@ -33,4 +33,4 @@ if __name__ == '__main__':
 	desired = {'audio_Fs': 1000, 'segmentation_tolerance': 0.1, 'use_mex': True, 'audio_segmentation_Fs': 50, 'include_wavelet_feature': True}
 	actual = default_Springer_HSMM_options()
 	assert(actual == desired)
-    print "default_Springer_HSMM_options.py has been tested successfully"
+	print "default_Springer_HSMM_options.py has been tested successfully"
