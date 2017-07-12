@@ -98,7 +98,7 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_
     # assignin('base', 'state_observation_values', state_observation_values) #XXX
 
     # ## Train the B and pi matrices after all the PCG recordings have been labelled:
-    # logistic_regression_B_matrix, pi_vector, total_obs_distribution = trainBandPiMatricesSpringer(state_observation_values) #XXX
+    logistic_regression_B_matrix, pi_vector, total_obs_distribution = trainBandPiMatricesSpringer(state_observation_values) #XXX
 
     # return [logistic_regression_B_matrix, pi_vector, total_obs_distribution]
 

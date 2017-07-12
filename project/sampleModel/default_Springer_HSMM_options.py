@@ -22,7 +22,7 @@ def default_Springer_HSMM_options():
 	springer_options['segmentation_tolerance'] = 0.1 #seconds
 
 	## Whether to use the mex code or not:
-	springer_options['use_mex'] = True #XXX
+	# springer_options['use_mex'] = True #XXX
 
 	## Whether to use the wavelet function or not:
 	springer_options['include_wavelet_feature'] = True
@@ -30,7 +30,7 @@ def default_Springer_HSMM_options():
 	return springer_options
 
 if __name__ == '__main__':
-	desired = {'audio_Fs': 1000, 'segmentation_tolerance': 0.1, 'use_mex': True, 'audio_segmentation_Fs': 50, 'include_wavelet_feature': True}
+	desired = {'audio_Fs': 1000, 'segmentation_tolerance': 0.1, 'audio_segmentation_Fs': 50, 'include_wavelet_feature': True}
 	actual = default_Springer_HSMM_options()
 	assert(actual == desired)
 	print "default_Springer_HSMM_options.py has been tested successfully"

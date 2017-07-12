@@ -45,47 +45,46 @@ def trainBandPiMatricesSpringer(state_observation_values):
     # coefficients of the trained logisitic regression model for each state.
     B_matrix = np.empty(number_of_states,dtype=object)
 
-    statei_values = np.array([])#np.empty((number_of_states,1),dtype=object)
 
-    # print np.shape(state_observation_values)[0]
-    for PCGi in range(0,np.shape(state_observation_values)[0]):
-        vals = np.array([])
-        print "yo", PCGi
-        for statei in range(0,number_of_states):
-            print "statei", statei
-            # print '->', np.shape(state_observation_values[PCGi])
-            vals = np.concatenate((vals,state_observation_values[:][PCGi]))
-            # print '->', np.shape(vals)
-            # print np.shape(statei_values[statei])
-            # print np.shape(state_observation_values[PCGi])
-            # if (len(statei_values[statei]) == 0):
-                # statei_values[statei] = state_observation_values[PCGi]
-            # else:
-                # statei_values[statei] = np.append(statei_values[statei],state_observation_values[PCGi])
-            # np.append(statei_values[statei],state_observation_values[PCGi])
-            # statei_values[statei] = np.concatenate((statei_values[statei],state_observation_values[PCGi]))
-        print "vals", np.shape(vals)
-        statei_values = np.concatenate((statei_values,vals))
-    print np.shape(statei_values)
+    statei_values = [np.array([],dtype=object)]*4#np.empty(number_of_states,dtype=object);
+    # print statei_values
+
+    for PCGi in range(0,len(state_observation_values)):
+        if (len(statei_values[0]) > 0):
+            # print np.shape(statei_values[0]), np.shape(state_observation_values[PCGi][0])
+            statei_values[0] = np.hstack((statei_values[0],state_observation_values[PCGi][0]))
+            statei_values[1] = np.hstack((statei_values[1],state_observation_values[PCGi][1]))
+            statei_values[2] = np.hstack((statei_values[2],state_observation_values[PCGi][2]))
+            statei_values[3] = np.hstack((statei_values[3],state_observation_values[PCGi][3]))
+        else:  
+            # print "yo"
+            statei_values[0] = state_observation_values[PCGi][0]
+            statei_values[1] = state_observation_values[PCGi][1]
+            statei_values[2] = state_observation_values[PCGi][2]
+            statei_values[3] = state_observation_values[PCGi][3]
+    # print np.shape(statei_values[0])
 
     # In order to use Bayes' formula with the logistic regression derived
     # probabilities, we need to get the probability of seeing a specific
     # observation in the total training data set. This is the
     # 'total_observation_sequence', and the mean and covariance for each state
     # is found:
-    total_observation_sequence = np.concatenate((statei_values[0], statei_values[1], statei_values[2], statei_values[3])) #xxx simplify
-    total_obs_distribution = np.empty(2)
-    total_obs_distribution[0] = np.mean(total_observation_sequence)
+    # total_observation_sequence = np.concatenate((statei_values[0], statei_values[1], statei_values[2], statei_values[3])) #xxx simplify
+    total_observation_sequence = np.hstack((statei_values[0], statei_values[1], statei_values[2], statei_values[3]))
+    # print np.shape(total_observation_sequence)
+    total_obs_distribution = np.empty(2, dtype=object)
+    total_obs_distribution[0] = np.mean(total_observation_sequence, axis=1)
     total_obs_distribution[1] = np.cov(total_observation_sequence)
+    # print total_obs_distribution[1]
+    # statei_values = np.array(statei_values)
 
-
-    for state in range(0,number_of_states):
+    for state in range(1,number_of_states+1):
         
         # Randomly select indices of samples from the other states not being 
         # learnt, in order to balance the two data sets. The code below ensures
         # that if class 1 is being learnt vs the rest, the number of the rest =
         # the number of class 1, evenly split across all other classes
-        length_of_state_samples = len(statei_values[state])
+        length_of_state_samples = len(statei_values[state-1])
         
         # Number of samples required from each of the other states:
         length_per_other_state = np.floor(length_of_state_samples/(number_of_states-1))
@@ -96,8 +95,8 @@ def trainBandPiMatricesSpringer(state_observation_values):
         #and (3* length) for main class
         min_length_other_class = np.inf
         
-        for other_state in range(0,number_of_states):
-            samples_in_other_state = len(statei_values[other_state])
+        for other_state in range(1,number_of_states+1):
+            samples_in_other_state = len(statei_values[other_state-1])
             
             if(other_state != state):
                 min_length_other_class = min([min_length_other_class, samples_in_other_state])
@@ -108,45 +107,94 @@ def trainBandPiMatricesSpringer(state_observation_values):
         if( length_per_other_state > min_length_other_class):
             length_per_other_state = min_length_other_class
         
-        training_data = np.empty(2)
-        
-        for other_state in range(0,number_of_states):
-            samples_in_other_state = len(statei_values[other_state])
+        training_data = np.empty(2, dtype=object)
+        for other_state in range(1,number_of_states+1):
+            samples_in_other_state = len(statei_values[other_state-1])
                     
             if(other_state == state):
                 #Make sure you only choose (n-1)*3 *
                 #length_per_other_state samples for the main
                 #state, to ensure that the sets are balanced:
-                indices = np.random.perumutation(samples_in_other_state,length_per_other_state*(number_of_states-1))
-                training_data[0] = statei_values[other_state][indices][:]
+                indices = np.random.permutation(samples_in_other_state)[0:length_per_other_state*(number_of_states-1)]
+                # print indices, statei_values[other_state-1][indices][:]
+                # training_data[0] = statei_values[other_state-1][indices][:]
+                # arr = [np.array([])]*4
+                # print np.j
+                arr = [] 
+                for i in indices:
+                    if (len(arr)==0):
+                        arr = statei_values[other_state-1][i]
+                    else:
+                        arr = np.hstack((arr, statei_values[other_state-1][i]))
+                training_data[0] = arr
             else:
-                indices = np.random.perumutation(samples_in_other_state,length_per_other_state)
-                state_data = statei_values[other_state][indices][:]
-                training_data[1] = np.concatenate(training_data[1], state_data)
+                indices = np.random.permutation(samples_in_other_state)[0:length_per_other_state]
+                # state_data = statei_values[other_state-1][indices][:]
+                # training_data[1] = np.concatenate(training_data[1], state_data)
+                arr = []
+                for i in indices:
+                    if (len(arr)==0):
+                        arr = statei_values[other_state-1][i]
+                    else:
+                        arr = np.hstack((arr, statei_values[other_state-1][i]))
+                training_data[1] = arr
         
         # Label all the data:
+        # print training_data[0]
         labels = np.ones(len(training_data[0]) + len(training_data[1]))
         labels[0:len(training_data[1])] = 2
-        
-        # Train the logisitic regression model for this state:
-        all_data = np.concatenate(training_data[0],training_data[1]) #xxx not sure
-        learner = LogisticRegression()
-        B = learner.fit(all_data,labels)
 
-        B_matrix[state] = B
+        # Train the logisitic regression model for this state:
+        all_data = np.hstack((training_data[0],training_data[1]))
+
+        labels = np.reshape(labels,(len(labels),1))
+        all_data = np.reshape(all_data,(len(all_data),1))
+
+        print np.shape(all_data), all_data
+        # print np.shape(labels), labels
+        # print np.shape()
+        learner = LogisticRegressionCV(multi_class='multinomial',solver ='lbfgs')
+        learner.fit(all_data,labels)
+
+        B_matrix[state-1] = learner.coef_
 
     return B_matrix, pi_vector, total_obs_distribution
 
 
 if __name__ == '__main__':
-    # import scipy.io
+    import scipy.io
+    all_data1 = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/all_data1.mat',struct_as_record=False)['all_data1']
+    # all_data1 = np.transpose(all_data1)
+    labels1 = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/labels1.mat',struct_as_record=False)['labels1']
+    # labels1 = np.transpose(labels1)
+    learner1 = LogisticRegression(C=1e5, multi_class='multinomial',solver ='newton-cg', class_weight='balanced')
+    print np.shape(all_data1), np.shape(labels1)
+    learner1.fit(all_data1,labels1)
+    print learner1.coef_
+    print learner1.intercept_
+
+
+    # all_data2 = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/all_data2.mat',struct_as_record=False)['all_data2']
+    # # all_data2 = np.transpose(all_data2)
+    # labels2 = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/labels2.mat',struct_as_record=False)['labels2']
+    # # labels2 = np.transpose(labels2)
+    # # import sklearn.naive_bayes
+    # learner2 = LogisticRegression(C=1e5, multi_class='multinomial',solver ='newton-cg')
+    # print np.shape(all_data2), np.shape(labels2)
+    # learner2.fit(all_data2,labels2)
+    # print learner2.coef_
+
     # state_observation_values = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/state_observation_values.mat',struct_as_record=False)
-    # state_observation_values = np.transpose(state_observation_values['state_observation_values'])
-    # # print np.shape(state_observation_values)
-    # print state_observation_values[0:10][0]
-    # res_B_matrix, res_pi_vector, res_total_obs_distribution = trainBandPiMatricesSpringer(state_observation_values)
-    # B_matrix = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/B_matrix.mat',struct_as_record=False) ## numpy.ndarray
-    # B_matrix = B_matrix['B_matrix'][0]
-    # print np.shape(state_observation_values)
-    # print B_matrix
-    pass
+    # state_observation_values = state_observation_values['state_observation_values'] 
+    # for v in range(0,len(state_observation_values)):
+    #     for i in range(0, len(state_observation_values[v])):
+    #         state_observation_values[v][i] = np.transpose(state_observation_values[v][i])
+
+    # actual_B_matrix, actual_pi_vector, actual_total_obs_distribution = trainBandPiMatricesSpringer(state_observation_values)
+    # print actual_B_matrix
+
+    # desired_B_matrix = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/B_matrix.mat',struct_as_record=False) ## numpy.ndarray
+    # desired_B_matrix = desired_B_matrix['B_matrix']
+    # print desired_B_matrix
+
+    print "trainBandPiMatricesSpringer.py has been tested successfully"

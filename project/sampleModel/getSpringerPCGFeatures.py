@@ -41,16 +41,21 @@ def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
     Fs = springer_options['audio_Fs']
     include_wavelet = springer_options['include_wavelet_feature']
     featuresFs = springer_options['audio_segmentation_Fs'] # Downsampled feature sampling frequency
+    print "orig", np.shape(audio_data), audio_data
 
     ## 25-400Hz 4th order Butterworth band pass
     audio_data = bf.butterworth_lowpass_filter(audio_data,2,400,Fs,'lowpass')
-    audio_data = bf.butterworth_highpass_filter(audio_data,2,25,Fs,'highpass')
+    print "lowpass", np.shape(audio_data), audio_data
 
+    audio_data = bf.butterworth_highpass_filter(audio_data,2,25,Fs,'highpass')
+    print "highpass", np.shape(audio_data), audio_data
     ## Spike removal from the original paper:
     audio_data = ssr.schmidt_spike_removal(audio_data,Fs)
+    # print np.shape(audio_data), audio_data
 
     # Find the homomorphic envelope
     homomorphic_envelope = heh.Homomorphic_Envelope_with_Hilbert(audio_data, Fs)
+    # print np.shape(homomorphic_envelope), homomorphic_envelope
     # Downsample the envelope:
     # print featuresFs, Fs
     # print homomorphic_envelope
@@ -102,5 +107,20 @@ def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
     #     pause()
     return PCG_Features, featuresFs
 
-if __name__ == 'main':
-    pass
+if __name__ == '__main__':
+    import scipy.io
+    input_signal = scipy.io.loadmat('./test_data/getSpringerPCGFeatures/audio_data.mat',struct_as_record=False)
+    input_signal = input_signal['audio_data']
+    input_signal = np.reshape(input_signal,np.shape(input_signal)[0])
+
+    import default_Springer_HSMM_options
+    springer_options = default_Springer_HSMM_options.default_Springer_HSMM_options()
+    
+    actual = getSpringerPCGFeatures(input_signal, springer_options)
+
+    desired = scipy.io.loadmat('./test_data/getSpringerPCGFeatures/PCG_Features.mat',struct_as_record=False)
+    desired = desired['PCG_Features']
+    desired = np.transpose(desired)
+
+    np.testing.assert_allclose(desired, actual, rtol=1e-07, atol=1e-7)
+    print "getSpringerPCGFeatures.py has been tested successfully"

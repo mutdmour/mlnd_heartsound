@@ -10,9 +10,8 @@ python getDWT.py
 python labelPCGStates.py
 python normalise_signal.py
 python get_duration_distributions.py
+python expand_qt.py
 #-W ignore to turn off warnings
 # python getSpringerPCGFeatures.py
 # python trainBandPiMatricesSpringer.py
 # python trainSpringerSegmentationAlgorithm.py
-
-# 
