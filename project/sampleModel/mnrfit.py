@@ -41,7 +41,7 @@ def mnrfit(x,y):
 def nominalFit(x,y,m,pi,n,k,p,pstar,parallel,iterLim,tolpos):
 
     kron1 = np.array([[1]*pstar]*(k-1))
-    kron2 = np.array([range(1,pstar+1)]*(k-1))
+    kron2 = np.array([range(0,pstar)]*(k-1))
 
     eta = np.log(pi)
 
@@ -80,15 +80,21 @@ def nominalFit(x,y,m,pi,n,k,p,pstar,parallel,iterLim,tolpos):
             Z = eta[i].dot(W) + (y[i] - mu[i])
             if (p > 0): # parallel models with p>0 have been weeded out
                 xstar = np.append(np.array([1]),x[i])
-                print xstar
                 # Do these computations, but more efficiently
                 # XWX = XWX + kron(W(1:k-1,1:k-1), xstar'*xstar)
                 # XWZ = XWZ + kron(Z(1:k-1)', xstar')
-                XWX = XWX + W(kron1,kron1) * (np.transpose(xstar[1][kron2])*xstar[1][kron2])
-                XWZ = XWZ + np.transpose(Z[1][kron1]) * np.transpose(xstar[1][kron2])
+                W_mat = np.array([kron1[0]]*len(kron1[0])) * W[0][0]
+                xstar_mat = np.array([xstar[0:len(kron2[0])]])
+                xstar_mat = np.transpose(xstar_mat) * xstar_mat
+                XWX = XWX + W_mat.dot(xstar_mat)
+
+                XWZ = XWZ + np.transpose(Z[kron1]) * np.transpose(xstar[kron2])
+                print XWZ
+                break
             else:
-                XWX = XWX + W[1:k-1][1:k-1]
-                XWZ = XWZ + np.transpose(Z[1:k-1])
+                print "warning: p < 0 "
+                # XWX = XWX + W[1:k-1][1:k-1]
+                # XWZ = XWZ + np.transpose(Z[1:k-1])
         break
         # b = XWX \ XWZ
 
