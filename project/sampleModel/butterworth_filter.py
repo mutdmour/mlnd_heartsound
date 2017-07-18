@@ -36,10 +36,10 @@ def butterworth_filter(original_signal,order,cutoff,sampling_frequency,ftype,fig
 
 	#Forward-backward filter the original signal using the butterworth
 	#coefficients, ensuring zero phase distortion
-	if (ftype=='lowpass'):
-		filtered_signal = filtfilt(B,A,original_signal)
-	else:
-		filtered_signal = filtfilt(B,A,original_signal)
+	# if (ftype=='lowpass'):
+		# filtered_signal = filtfilt(B,A,original_signal)
+	# else:
+	filtered_signal = filtfilt(B,A,original_signal)
 
 	return filtered_signal
 

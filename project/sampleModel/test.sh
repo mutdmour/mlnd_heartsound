@@ -11,6 +11,7 @@ python labelPCGStates.py
 python normalise_signal.py
 python get_duration_distributions.py
 python expand_qt.py
+python mnrfit.py
 #-W ignore to turn off warnings
 # python getSpringerPCGFeatures.py
 # python trainBandPiMatricesSpringer.py
