@@ -26,22 +26,6 @@
 # need to calculate the A_matrix, as the transition between states is only
 # dependant on the state durations.
 #
-## Copyright (C) 2016  David Springer
-# dave.springer@gmail.com
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY;without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 
 #function [logistic_regression_B_matrix, pi_vector, total_obs_distribution] = 
 import numpy as np
@@ -100,5 +84,5 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_
     # ## Train the B and pi matrices after all the PCG recordings have been labelled:
     logistic_regression_B_matrix, pi_vector, total_obs_distribution = trainBandPiMatricesSpringer(state_observation_values) #XXX
 
-    # return [logistic_regression_B_matrix, pi_vector, total_obs_distribution]
+    return logistic_regression_B_matrix, pi_vector, total_obs_distribution
 

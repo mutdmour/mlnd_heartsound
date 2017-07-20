@@ -1,24 +1,6 @@
 ## Example Springer script
 # A script to demonstrate the use of the Springer segmentation algorithm
 
-## Copyright (C) 2016  David Springer
-# dave.springer@gmail.com
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-## Remastered in Python - Mutasem Aldmour
-
 import default_Springer_HSMM_options
 import trainSpringerSegmentationAlgorithm
 import scipy.io
@@ -46,8 +28,8 @@ def runExampleScript():
 	## Split the data into train and test sets:
 	# Select the 5 recordings for training and a sixth for testing:
 	training_indices = [0, 46, 360, 401, 571]
-	train_recordings = np.array([example_audio_data[0][i] for i in training_indices])
-	train_annotations = np.array([example_annotations[i] for i in training_indices])
+	train_recordings = np.transpose(np.array([example_audio_data[0][i] for i in training_indices]))
+	train_annotations = np.transpose(np.array([example_annotations[i] for i in training_indices]))
 
 	test_index = 663
 	test_recordings = example_audio_data[0][test_index] 

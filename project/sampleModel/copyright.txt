@@ -1,4 +1,4 @@
-# Remastered in Python by Mutasem Aldmour github.com/mutdmourw
+# Remastered in Python by Mutasem Aldmour github.com/mutdmour
 
 # This code was originally developed by David Springer for comparison purposes in the
 # paper:

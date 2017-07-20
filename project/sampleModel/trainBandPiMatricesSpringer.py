@@ -166,13 +166,26 @@ if __name__ == '__main__':
     for v in range(0,len(state_observation_values)):
         for i in range(0, len(state_observation_values[v])):
             state_observation_values[v][i] = np.transpose(state_observation_values[v][i])
-
+    np.random.seed(0)
     actual_B_matrix, actual_pi_vector, actual_total_obs_distribution = trainBandPiMatricesSpringer(state_observation_values)
+    actual_total_obs_distribution = np.transpose(np.array([actual_total_obs_distribution]))
+    # print np.shape(actual_B_matrix), actual_B_matrix
 
-    # desired_B_matrix = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/B_matrix.mat',struct_as_record=False) ## numpy.ndarray
-    # desired_B_matrix = desired_B_matrix['B_matrix']
-    # print desired_B_matrix
+    desired_B_matrix = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/B_matrix.mat',struct_as_record=False) ## numpy.ndarray
+    desired_B_matrix = desired_B_matrix['B_matrix'][0]
 
-    # random in code, not sure if can be tested
+    desired_total_obs_distribution = scipy.io.loadmat('./test_data/trainBandPiMatricesSpringer/total_obs_distribution.mat',struct_as_record=False) ## numpy.ndarray
+    desired_total_obs_distribution = desired_total_obs_distribution['total_obs_distribution']
 
+    l = len(actual_total_obs_distribution)
+    for a in range(0,l):
+        l_ = len(actual_total_obs_distribution[a])
+        for b in range(0,l_):
+            np.testing.assert_allclose(actual_total_obs_distribution[a][b], actual_total_obs_distribution[a][b], rtol=1e-7, atol=.5)
+
+    l = len(desired_B_matrix)
+    for a in range(0,l):
+        np.testing.assert_allclose(actual_B_matrix[a], desired_B_matrix[a], rtol=1e-7, atol=.5)
+
+    # no need to test pi_vector because it's static
     print "trainBandPiMatricesSpringer.py has been tested successfully"

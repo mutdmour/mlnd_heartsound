@@ -55,10 +55,7 @@ def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
 
     # Find the homomorphic envelope
     homomorphic_envelope = heh.Homomorphic_Envelope_with_Hilbert(audio_data, Fs)
-    # print np.shape(homomorphic_envelope), homomorphic_envelope
     # Downsample the envelope:
-    # print featuresFs, Fs
-    # print homomorphic_envelope
     downsampled_homomorphic_envelope = resample_poly(homomorphic_envelope,featuresFs, Fs)
     # normalise the envelope:
     downsampled_homomorphic_envelope = ns.normalise_signal(downsampled_homomorphic_envelope)
@@ -75,7 +72,6 @@ def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
     psd = ns.normalise_signal(psd)
 
     ## Wavelet features:
-
     if (include_wavelet):
         wavelet_level = 3
         wavelet_name = 'rbio3.9'
