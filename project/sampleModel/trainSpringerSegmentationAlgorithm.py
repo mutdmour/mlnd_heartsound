@@ -31,14 +31,14 @@
 import numpy as np
 import getSpringerPCGFeatures as gSPCGF
 import labelPCGStates as labelPCG
+import default_Springer_HSMM_options as opts
+import trainBandPiMatricesSpringer as train
 
 #options instead of Fs
-def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_options, figures=False):
+def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, Fs, figures=False):
 
     numberOfStates = 4
     numPCGs = len(PCGCellArray)
-
-    Fs = springer_options['audio_Fs']
 
     # A matrix of the values from each state in each of the PCG recordings:
     state_observation_values = np.empty((numPCGs,numberOfStates), dtype=object)
@@ -49,11 +49,11 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_
         S1_locations = annotationsArray[PCGi][0]
         S2_locations = annotationsArray[PCGi][1]
         
-        [PCG_Features, featuresFs] = gSPCGF.getSpringerPCGFeatures(PCG_audio, springer_options)
+        [PCG_Features, featuresFs] = gSPCGF.getSpringerPCGFeatures(PCG_audio, opts.default_Springer_HSMM_options())
         
         PCG_states = labelPCG.labelPCGStates(PCG_Features[:][0],S1_locations, S2_locations, featuresFs) #XXX
         
-        ## XXX
+        ## TODO
         ## Plotting assigned states:
         # if(figures)
         #     figure('Name','Assigned states to PCG')
@@ -82,7 +82,36 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, springer_
     # assignin('base', 'state_observation_values', state_observation_values) #XXX
 
     # ## Train the B and pi matrices after all the PCG recordings have been labelled:
-    logistic_regression_B_matrix, pi_vector, total_obs_distribution = trainBandPiMatricesSpringer(state_observation_values) #XXX
+    logistic_regression_B_matrix, pi_vector, total_obs_distribution = train.trainBandPiMatricesSpringer(state_observation_values) #XXX
 
     return logistic_regression_B_matrix, pi_vector, total_obs_distribution
 
+if __name__ == '__main__':
+    import scipy.io
+
+    x = scipy.io.loadmat('./test_data/trainSpringerSegmentationAlgorithm/PCGCellArray.mat', struct_as_record=False)
+    x = x['PCGCellArray'][0]
+    PCGCellArray = map(lambda x: np.reshape(x, np.shape(x)[0]), x)
+
+    x = scipy.io.loadmat('./test_data/trainSpringerSegmentationAlgorithm/annotationsArray.mat', struct_as_record=False)
+    x = x['annotationsArray']
+    annotationsArray = map(lambda z: map(lambda y: np.reshape(y, np.shape(y)[0]), z), x)
+
+    actual = trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, 1000)
+
+    x = scipy.io.loadmat('./test_data/trainSpringerSegmentationAlgorithm/logistic_regression_B_matrix.mat', struct_as_record=False)
+    x = x['logistic_regression_B_matrix']
+    logistic_regression_B_matrix = np.reshape(x, np.shape(x)[0])
+
+    x = scipy.io.loadmat('./test_data/trainSpringerSegmentationAlgorithm/pi_vector.mat', struct_as_record=False)
+    x = x['pi_vector']
+    pi_vector = np.reshape(x, np.shape(x)[0])
+
+    x = scipy.io.loadmat('./test_data/trainSpringerSegmentationAlgorithm/total_obs_distribution.mat', struct_as_record=False)
+    x = x['total_obs_distribution']
+    total_obs_distribution = np.reshape(x, np.shape(x)[0])
+
+    np.testing.assert_allclose(actual[0], logistic_regression_B_matrix, rtol=1e-3, atol=1e-3)
+    np.testing.assert_allclose(actual[1], pi_vector, rtol=1e-3, atol=1e-3)
+    np.testing.assert_allclose(actual[1], total_obs_distribution, rtol=1e-3, atol=1e-3)
+    print "trainSpringerSegmentationAlgorithm.py has been tested successfully"
