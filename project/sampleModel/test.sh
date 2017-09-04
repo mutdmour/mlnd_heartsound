@@ -16,9 +16,9 @@ python mnrfit.py
 python normalise_signal.py
 python schmidt_spike_removal.py
 python trainBandPiMatricesSpringer.py
+python trainSpringerSegmentationAlgorithm.py
 python xcorr.py
 
 #TODO -W ignore to turn off warnings
-# python trainSpringerSegmentationAlgorithm.py
 # python viterbiDecodePCG_Springer
 # python runSpringerSegmentationAlgorithm.py

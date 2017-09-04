@@ -38,7 +38,7 @@ def runSpringerSegmentationAlgorithm(audio_data, Fs, B_matrix, pi_vector, total_
 
 	delta, psi, qt = vDPCG.viterbiDecodePCG_Springer(PCG_Features, pi_vector, B_matrix, total_observation_distribution, heartRate, systolicTimeInterval, featuresFs)
 
-	assigned_states = eqt.expand_qt(qt, featuresFs, Fs, length(audio_data))
+	assigned_states = eqt.expand_qt(qt, featuresFs, Fs, len(audio_data))
 
 	# if(figures)
 	#    figure('Name','Derived state sequence')
