@@ -22,3 +22,4 @@ python xcorr.py
 #TODO -W ignore to turn off warnings
 # python viterbiDecodePCG_Springer
 # python runSpringerSegmentationAlgorithm.py
+# python mnrval.py

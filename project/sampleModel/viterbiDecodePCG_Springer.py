@@ -47,6 +47,8 @@
 import default_Springer_HSMM_options
 import get_duration_distributions as gdd
 import numpy as np
+from scipy.stats import multivariate_normal
+import mnrval as mnrval
 
 def viterbiDecodePCG_Springer(observation_sequence, pi_vector, b_matrix, total_obs_distribution, heartrate, systolic_time, Fs,figures=False):
     Fs = float(Fs)
@@ -55,7 +57,7 @@ def viterbiDecodePCG_Springer(observation_sequence, pi_vector, b_matrix, total_o
     ## Preliminary
     springer_options = default_Springer_HSMM_options.default_Springer_HSMM_options()
 
-    T = len(observation_sequence)
+    T = np.shape(observation_sequence)[1]
     N = 4 # Number of states
 
     # Setting the maximum duration of a single state. This is set to an entire
@@ -82,7 +84,7 @@ def viterbiDecodePCG_Springer(observation_sequence, pi_vector, b_matrix, total_o
     psi_duration = np.zeros((T + max_duration_D-1,N))
 
     ## Setting up observation probs
-    observation_probs = np.zeros(T,N)
+    observation_probs = np.zeros((N,T))
 
     for n in range(1,N):
         
@@ -91,11 +93,11 @@ def viterbiDecodePCG_Springer(observation_sequence, pi_vector, b_matrix, total_o
         #P(o|state) = P(state|obs) * P(obs) / P(states)
         #Where p(obs) is derived from a MVN distribution from all
         #obserbations, and p(states) is taken from the pi_vector:
-        pihat = mnrval(cell2mat(b_matrix(n)),observation_sequence)
+        pihat = mnrval.mnrval(cell2mat(b_matrix(n)),observation_sequence)
         
         for t in range(1,T):
             
-            Po_correction = mvnpdf(observation_sequence[t][:],cell2mat(total_obs_distribution(1)),cell2mat(total_obs_distribution(2)))
+            Po_correction = multivariate_normal(observation_sequence[t][:],cell2mat(total_obs_distribution(1)),cell2mat(total_obs_distribution(2)))
             
             #When saving the coefficients from the logistic
             #regression, it orders them P(class 1) then P(class 2). When
@@ -111,27 +113,27 @@ def viterbiDecodePCG_Springer(observation_sequence, pi_vector, b_matrix, total_o
     for state_j in range(1,N):
         for d in range(1, max_duration_D):
             if(state_j == 1):
-                duration_probs[state_j][d] = mvnpdf(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
+                duration_probs[state_j][d] = multivariate_normal(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
                 
                 if(d < min_S1 or d > max_S1):
                     duration_probs[state_j][d]= realmin
 
             elif(state_j==3):
-                duration_probs[state_j][d] = mvnpdf(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
+                duration_probs[state_j][d] = multivariate_normal(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
                 
                 if(d < min_S2 or d > max_S2):
                     duration_probs[state_j][d]= realmin
                 
             elif(state_j==2):
                 
-                duration_probs[state_j][d] = mvnpdf(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
+                duration_probs[state_j][d] = multivariate_normal(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
                 
                 if(d < min_systole or d > max_systole):
                     duration_probs[state_j][d]= realmin
                 
             elif (state_j==4):
                 
-                duration_probs[state_j][d] = mvnpdf(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
+                duration_probs[state_j][d] = multivariate_normal(d,cell2mat(d_distributions(state_j,1)),cell2mat(d_distributions(state_j,2)))
                 
                 if(d < min_diastole or d > max_diastole):
                     duration_probs[state_j][d]= realmin
@@ -364,17 +366,20 @@ if __name__ == '__main__':
     import scipy.io
     observation_sequence = scipy.io.loadmat('./test_data/viterbiDecodePCG_Springer/observation_sequence.mat',struct_as_record=False)
     observation_sequence = observation_sequence['observation_sequence']
-    observation_sequence = np.transpose(observation_sequence)
+    observation_sequence = np.transpose(observation_sequence) ## PCG Features
 
     b_matrix = scipy.io.loadmat('./test_data/viterbiDecodePCG_Springer/b_matrix.mat',struct_as_record=False)
-    b_matrix = b_matrix['b_matrix']
-    b_matrix = np.transpose(b_matrix)
-    b_matrix = [np.transpose(b[0]) for b in b_matrix]
-    b_matrix = np.reshape(b_matrix, (np.shape(b_matrix)[0],np.shape(b_matrix)[2]))
+    b_matrix = b_matrix['b_matrix'][0]
+    b_matrix = map(lambda x: np.reshape(x, np.shape(x)[0]), b_matrix)
+    # b_matrix = np.transpose(b_matrix)
+    # b_matrix = [np.transpose(b[0]) for b in b_matrix]
+    # b_matrix = np.reshape(b_matrix, (np.shape(b_matrix)[0],np.shape(b_matrix)[2]))
 
-    total_obs_distribution = scipy.io.loadmat('./test_data/viterbiDecodePCG_Springer/total_obs_distribution.mat',struct_as_record=False)
-    total_obs_distribution = total_obs_distribution['total_obs_distribution']
-    total_obs_distribution = np.transpose(total_obs_distribution)
+    x = scipy.io.loadmat('./test_data/viterbiDecodePCG_Springer/total_obs_distribution.mat',struct_as_record=False)
+    x = x['total_obs_distribution']
+    total_obs_distribution = np.empty(2, dtype=object)
+    total_obs_distribution[0] = x[0][0][0]
+    total_obs_distribution[1] = np.transpose(x[1][0])
 
     viterbiDecodePCG_Springer(observation_sequence, pi_vector, b_matrix, total_obs_distribution, heartrate, systolic_time, Fs)
     # print np.shape(total_obs_distribution), total_obs_distribution
