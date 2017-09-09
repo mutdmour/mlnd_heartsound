@@ -78,7 +78,8 @@ if __name__ == '__main__':
     desired = x['assigned_states']
     desired = np.transpose(desired)[0]
 
-    #TODO
-    # np.testing.assert_allclose(assigned_states, desired, rtol=1e-3, atol=1e-3)
+    mismatch = np.sum((desired - assigned_states) != 0) / float(np.shape(desired)[0]) * 100
+
+    assert(mismatch < 2) #assert that mismatch is less than 2 %
 
     print "runSpringerSegmentationAlgorithm.py has been tested successfully"

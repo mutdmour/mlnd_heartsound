@@ -44,8 +44,8 @@ def runExampleScript():
 	# # And display the resulting segmentation
 	# numPCGs = len(test_recordings)
 
-	# for PCGi in range(1,numPCGs):
-	#     [assigned_states] = runSpringerSegmentationAlgorithm(test_recordings{PCGi}, springer_options.audio_Fs, B_matrix, pi_vector, total_obs_distribution, true) #XXX
+	for PCGi in range(1,numPCGs):
+	    [assigned_states] = runSpringerSegmentationAlgorithm(test_recordings{PCGi}, springer_options.audio_Fs, B_matrix, pi_vector, total_obs_distribution, true) #XXX
 
 if __name__ == '__main__':
 	runExampleScript()

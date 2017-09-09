@@ -23,4 +23,3 @@ python viterbiDecodePCG_Springer
 python xcorr.py
 
 #TODO -W ignore to turn off warnings
-# python runSpringerSegmentationAlgorithm.py
