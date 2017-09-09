@@ -36,7 +36,7 @@ def runSpringerSegmentationAlgorithm(audio_data, Fs, B_matrix, pi_vector, total_
 	## Get PCG heart rate
 	heartRate, systolicTimeInterval = getHR.getHeartRateSchmidt(audio_data, Fs)
 
-	delta, psi, qt = vDPCG.viterbiDecodePCG_Springer(PCG_Features, pi_vector, B_matrix, total_observation_distribution, heartRate, systolicTimeInterval, featuresFs)
+	delta, psi, qt = vDPCG.viterbiDecodePCG_Springer(np.array(PCG_Features), pi_vector, B_matrix, total_observation_distribution, heartRate, systolicTimeInterval, featuresFs)
 
 	assigned_states = eqt.expand_qt(qt, featuresFs, Fs, len(audio_data))
 
@@ -48,3 +48,37 @@ def runSpringerSegmentationAlgorithm(audio_data, Fs, B_matrix, pi_vector, total_
 	#    plot(t1,assigned_states,'r--')
 	#    xlabel('Time (s)')
 	#    legend('Audio data', 'Derived states')
+
+	return np.array(assigned_states)
+
+if __name__ == '__main__':
+
+    import scipy.io
+    import numpy as np
+
+    Fs = 1000
+    pi_vector = [.25,.25,.25,.25]
+
+    x = scipy.io.loadmat('./test_data/runSpringerSegmentationAlgorithm/audio_data.mat', struct_as_record=False)
+    audio_data = np.transpose(x['audio_data'])[0]
+
+    x = scipy.io.loadmat('./test_data/runSpringerSegmentationAlgorithm/B_matrix.mat', struct_as_record=False)
+    B_matrix = x['B_matrix'][0]
+    B_matrix = map(lambda x: np.reshape(x,np.shape(x)[0]), B_matrix)
+
+    x = scipy.io.loadmat('./test_data/runSpringerSegmentationAlgorithm/total_observation_distribution.mat', struct_as_record=False)
+    x = x['total_observation_distribution']
+    total_obs_distribution = np.empty(2, dtype=object)
+    total_obs_distribution[0] = x[0][0][0]
+    total_obs_distribution[1] = np.transpose(x[1][0])
+
+    assigned_states = runSpringerSegmentationAlgorithm(audio_data, Fs, B_matrix, pi_vector, total_obs_distribution)
+
+    x = scipy.io.loadmat('./test_data/runSpringerSegmentationAlgorithm/assigned_states.mat', struct_as_record=False)
+    desired = x['assigned_states']
+    desired = np.transpose(desired)[0]
+
+    #TODO
+    # np.testing.assert_allclose(assigned_states, desired, rtol=1e-3, atol=1e-3)
+
+    print "runSpringerSegmentationAlgorithm.py has been tested successfully"

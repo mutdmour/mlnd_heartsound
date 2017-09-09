@@ -49,7 +49,7 @@ def trainSpringerSegmentationAlgorithm(PCGCellArray, annotationsArray, Fs, figur
         S1_locations = annotationsArray[PCGi][0]
         S2_locations = annotationsArray[PCGi][1]
         
-        [PCG_Features, featuresFs] = gSPCGF.getSpringerPCGFeatures(PCG_audio, opts.default_Springer_HSMM_options())
+        [PCG_Features, featuresFs] = gSPCGF.getSpringerPCGFeatures(PCG_audio, Fs)
         
         PCG_states = labelPCG.labelPCGStates(PCG_Features[:][0],S1_locations, S2_locations, featuresFs) #XXX
         

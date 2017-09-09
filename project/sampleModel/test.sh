@@ -13,13 +13,14 @@ python Hilbert_Envelope.py
 python Homomorphic_Envelope_with_Hilbert.py
 python labelPCGStates.py
 python mnrfit.py
+python mnrval.py
+python mvnpdf.py
 python normalise_signal.py
 python schmidt_spike_removal.py
 python trainBandPiMatricesSpringer.py
 python trainSpringerSegmentationAlgorithm.py
+python viterbiDecodePCG_Springer
 python xcorr.py
 
 #TODO -W ignore to turn off warnings
-# python viterbiDecodePCG_Springer
 # python runSpringerSegmentationAlgorithm.py
-# python mnrval.py

@@ -32,13 +32,15 @@ import numpy as np
 import getDWT as gdwt
 # from scipy.signal import resample_poly
 # from sp.multirate import resample
+import default_Springer_HSMM_options
 
-def getSpringerPCGFeatures(audio_data, springer_options, figures=False):
+def getSpringerPCGFeatures(audio_data, Fs, figures=False):
     # function PCG_Features = getSpringerPCGFeatures(audio, Fs)
     # Get the features used in the Springer segmentation algorithm.
 
     # Check to see if the Wavelet toolbox is available on the machine:
-    Fs = springer_options['audio_Fs']
+    # Fs = springer_options['audio_Fs']
+    springer_options = default_Springer_HSMM_options.default_Springer_HSMM_options()
     include_wavelet = springer_options['include_wavelet_feature']
     featuresFs = springer_options['audio_segmentation_Fs'] # Downsampled feature sampling frequency
     # print "orig", np.shape(audio_data), audio_data
@@ -112,7 +114,7 @@ if __name__ == '__main__':
     import default_Springer_HSMM_options
     springer_options = default_Springer_HSMM_options.default_Springer_HSMM_options()
     
-    actual = getSpringerPCGFeatures(input_signal, springer_options)[0]
+    actual = getSpringerPCGFeatures(input_signal, 1000)[0]
 
     desired = scipy.io.loadmat('./test_data/getSpringerPCGFeatures/PCG_Features.mat',struct_as_record=False)
     desired = desired['PCG_Features']
