@@ -16,10 +16,12 @@ python mnrfit.py
 python mnrval.py
 python mvnpdf.py
 python normalise_signal.py
+#python runExampleScript.py
 python schmidt_spike_removal.py
 python trainBandPiMatricesSpringer.py
-python trainSpringerSegmentationAlgorithm.py
+#python trainSpringerSegmentationAlgorithm.py #todo
 python viterbiDecodePCG_Springer
 python xcorr.py
 
 #TODO -W ignore to turn off warnings
+#todo one testing module

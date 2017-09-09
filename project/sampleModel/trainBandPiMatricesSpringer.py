@@ -156,6 +156,8 @@ def trainBandPiMatricesSpringer(state_observation_values):
 
         B_matrix[state-1] = B
 
+    B_matrix = np.array(map(lambda x: np.reshape(x, np.shape(x)[0]), B_matrix)) #todo maybe there should not be a need to do this
+
     return B_matrix, pi_vector, total_obs_distribution
 
 
@@ -184,6 +186,7 @@ if __name__ == '__main__':
             np.testing.assert_allclose(actual_total_obs_distribution[a][b], actual_total_obs_distribution[a][b], rtol=1e-7, atol=.5)
 
     l = len(desired_B_matrix)
+    #B_matrix = np.array(map(lambda x: np.reshape(x, np.shape(x)[0]), B_matrix)) todo
     for a in range(0,l):
         np.testing.assert_allclose(actual_B_matrix[a], desired_B_matrix[a], rtol=1e-7, atol=.5)
 

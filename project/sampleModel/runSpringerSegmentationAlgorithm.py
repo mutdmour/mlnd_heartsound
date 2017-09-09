@@ -26,8 +26,9 @@ import expand_qt as eqt
 import getHeartRateSchmidt as getHR
 import viterbiDecodePCG_Springer as vDPCG
 import getSpringerPCGFeatures as gSPCGF
+import numpy as np
 
-#function assigned_states = 
+#function assigned_states =
 def runSpringerSegmentationAlgorithm(audio_data, Fs, B_matrix, pi_vector, total_observation_distribution, figures=False):
 
 	## Get PCG Features:
@@ -54,7 +55,6 @@ def runSpringerSegmentationAlgorithm(audio_data, Fs, B_matrix, pi_vector, total_
 if __name__ == '__main__':
 
     import scipy.io
-    import numpy as np
 
     Fs = 1000
     pi_vector = [.25,.25,.25,.25]
